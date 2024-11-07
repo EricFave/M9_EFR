@@ -1,20 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Comptador de Visites</title>
+</head>
+<body>
+    <h1>Botiga</h1>
 <?php
-// Inicia sessió per emmagatzemar si s'ha aplicat descompte
-session_start();
 
-// Configura el comptador de visites utilitzant cookies
-if (!isset($_COOKIE['contador_visites'])) {
-    $contador = 1;
+if (isset($_COOKIE['visita'])) {
+    	$visites = $_COOKIE['visita'] + 1;
+	setcookie('visita', $visites, time() + 3600); //1hora
+	echo "Es la teva visita numero " . $visites; 
 } else {
-    $contador = $_COOKIE['contador_visites'] + 1;
+    	$visites = 1;
+	setcookie('visita', $visites, time() + 3600);
+	echo "Es la teva primera visita.";
 }
-setcookie('contador_visites', $contador, time() + (86400 * 30)); // Cookie que dura 30 dies
-
-// Missatge de descompte segons el nombre de visites
 $missatge = '';
-if ($contador >= 10 && !isset($_SESSION['descompte_usat'])) {
+if ($visites >= 10 && !isset($_SESSION['descompte_usat'])) {
     $missatge = "Oferta exclusiva sols per a tu! Utilitza el codi BOTIGA50 per obtenir un 50% de descompte en les teves primeres compres a la botiga.";
-} elseif ($contador >= 5 && !isset($_SESSION['descompte_usat'])) {
+} elseif ($visites >= 5 && !isset($_SESSION['descompte_usat'])) {
     $missatge = "Oferta exclusiva! Utilitza el codi BOTIGA20 per obtenir un 20% de descompte en les teves primeres compres a la botiga.";
 }
 
@@ -29,16 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="ca">
-<head>
-    <meta charset="UTF-8">
-    <title>Comptador de Visites</title>
-</head>
-<body>
-    <h1>Benvingut a la Botiga</h1>
-    <p>Has visitat aquesta pàgina <?php echo $contador; ?> vegades.</p>
     <?php if ($missatge): ?>
         <p><?php echo $missatge; ?></p>
     <?php endif; ?>
@@ -47,6 +43,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="text" name="codi_descompte" id="codi_descompte">
         <button type="submit">Aplicar</button>
     </form>
-    <button>Comprar</button>
 </body>
 </html>
